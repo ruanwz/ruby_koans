@@ -31,9 +31,33 @@ require 'edgecase'
 
 def score(dice)
   # You need to write this method
+  result=Hash.new
+  dice.each do |i|
+		result[i]||=0  			
+		result[i]+=1
+	end
+	ret=result.inject(0) do |sum,a|
+		num=a[0]
+		times=a[1]
+		case num
+		when 1,5
+			if times < 3
+				sum+=100*times if num==1
+				sum+=50*times if num==5
+			else
+		    sum+=1000+100*(times-3) if num==1
+		    sum+=500+50*(times-3) if num==5
+			end
+		else
+			sum+=num*100 if times>=3
+		end
+		sum
+	end
+	ret||=0
 end
 
 class AboutScoringAssignment < EdgeCase::Koan
+
   def test_score_of_an_empty_list_is_zero
     assert_equal 0, score([])
   end
@@ -67,7 +91,7 @@ class AboutScoringAssignment < EdgeCase::Koan
   end
 
   def test_score_of_mixed_is_sum
-    assert_equal 50, score([2,5,2,2,3])
+    assert_equal 250, score([2,5,2,2,3])
     assert_equal 550, score([5,5,5,5])
   end
 
