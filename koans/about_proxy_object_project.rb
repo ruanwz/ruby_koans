@@ -15,7 +15,22 @@ require 'edgecase'
 class Proxy
   def initialize(target_object)
     @object = target_object
+		@messages=[]
   end
+	def method_missing(method_name,*args,&block)
+		@messages<<method_name
+		@object.send(method_name,*args,&block)
+	end
+	def messages
+		@messages
+	end
+	def called?(method) 
+		@messages.include?(method)
+	end
+	def number_of_times_called(method)
+		@messages.find_all{|m|m==method}.size
+	end
+
 end
 
 # The proxy object should pass the following Koan:
